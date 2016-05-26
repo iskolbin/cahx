@@ -21,11 +21,42 @@ class Html5Test {
 	public static var predstamp = 0.0;
 	public static var simulationInterval = 100;
 
+	static var active = true;
+	static var mouseIsDown = false;
+	static var mouseX = 0;
+	static var mouseY = 0;
+
 	static function init() {
+		var body = Browser.document.getElementsByTagName('body').item(0); 
+		
 		canvas.width = canvas.offsetWidth;
 		canvas.height = canvas.offsetHeight;
+
 		w = canvas.width;
 		h = canvas.height;
+	
+		body.onkeydown = function(e) {
+			trace( active );
+			active = !active;
+		};
+
+		canvas.onmousedown = function( e ) {
+			mouseIsDown = true;
+			mouseX = e.x;
+			mouseY = e.y;
+		}
+
+		canvas.onmouseup = function(e){
+			mouseIsDown = false;
+			mouseX = e.x;
+			mouseY = e.y;
+		}
+
+		canvas.onmousemove = function(e){
+			mouseX = e.x;
+			mouseY = e.y;
+		}
+		
 		var gridw = Std.int( w/cellw );
 		var gridh = Std.int( h/cellh );
 		//automaton = new ca.impl.ForestFireCa( gridw, gridh, 0.00001, 0.01 );
@@ -53,7 +84,13 @@ class Html5Test {
 	}
 
 	static function update() {
-		automaton.update();
+		if ( mouseIsDown ) {
+			//trace( mouseX, mouseY, Std.int(mouseX/cellw), Std.int(mouseY/cellh) );
+			automaton.setCell( Std.int(mouseX/cellw), Std.int(mouseY/cellh), 1 ); 
+		}
+		if ( active ) {
+			automaton.update();
+		}
 		haxe.Timer.delay( update, simulationInterval );
 	}
 	
@@ -66,4 +103,6 @@ class Html5Test {
 
 		Browser.window.requestAnimationFrame( render );
 	}
+	
 }
+

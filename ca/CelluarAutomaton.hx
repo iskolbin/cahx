@@ -7,6 +7,8 @@ class CelluarAutomaton {
 	public var renderBuffer(default,null): RenderBuffer;
 	public var width(get,null): Int;
 	public var height(get,null): Int;
+	public var statesCount(default,null): Int;
+	public var dirty = true;
 
 	public inline function get_width() return grid.width;
 	public inline function get_height() return grid.height;
@@ -25,6 +27,7 @@ class CelluarAutomaton {
 		this.gridBuffer0.map( initCell, this.gridBuffer0 );
 		this.gridBuffer1 = this.gridBuffer0.copy();
 		this.grid = this.gridBuffer0;
+		this.statesCount = colors.length;
 	}
 
 	public function update(): Void {
@@ -33,7 +36,6 @@ class CelluarAutomaton {
 		var width = this.width;
 		var height = this.height;
 
-		renderBuffer.clear();
 		for ( x in 0...width ) {
 			for ( y in 0...height ) {
 				var newc = updateCell( gridPrev[x][y], x, y );
@@ -43,6 +45,8 @@ class CelluarAutomaton {
 		}
 		
 		swapGridBuffers();
+		
+		dirty = true;
 	}
 
 	inline function nextGridBuffer() {
@@ -54,8 +58,45 @@ class CelluarAutomaton {
 		this.grid = gridBuffer;
 	}
 
+	inline function updateRenderBuffer() {
+		if ( dirty ) {
+			var grid = this.grid.grid;
+			var width = this.width;
+			var height = this.height;
+
+			renderBuffer.clear();
+			for ( x in 0...width ) {
+				for ( y in 0...height ) {
+					renderBuffer.add( grid[x][y], x, y );
+				}
+			}
+
+			dirty = false;
+		}
+	}
+		
 	public function render( renderer: Renderer, cellw: Int, cellh: Int, screenw: Int, screenh: Int ): Void {
-	renderer.clear( screenw, screenh );
+		updateRenderBuffer();
+		renderer.clear( screenw, screenh );
 		renderer.render( renderBuffer, cellw, cellh );	
 	}
+
+	public static inline var NEXT = -1;
+	public static inline var PREV = -2;
+
+	public function setCell( x: Int, y: Int, value: Int ) {
+		var grid = this.grid.grid;
+		var nextvalue = if ( value == NEXT ) {
+			(grid[x][y] + 1) % this.statesCount;
+		} else if ( value == PREV ) {
+			(grid[x][y] - 1) % this.statesCount;
+		} else {
+			(value) % this.statesCount;
+		}
+
+		if ( nextvalue != grid[x][y] ) {
+			grid[x][y] = nextvalue;
+			dirty = true;
+		}
+	}	
 }

@@ -5,8 +5,6 @@ import ca.color.Hsv;
 import ca.color.Rgb;
 
 class GenerationsCa extends CelluarAutomaton {
-	public var colorsCount(default,null): Int;
-	
 	public function new( width: Int, height: Int, colorsCount: Int ) {
 		this.colorsCount = colorsCount;
 		var colors = new Array<String>();
@@ -19,12 +17,12 @@ class GenerationsCa extends CelluarAutomaton {
 	}
 
 	override function initCell( v: Int, x: Int, y: Int ): Int {
-		return Std.random( colorsCount );
+		return Std.random( this.statesCount );
 	}
 
 	override function updateCell( v: Int, x: Int, y: Int ): Int {
-		return ( this.grid.getNeighborsNeumann( x, y, 1 ).indexOf( (v+1)%colorsCount ) >= 0 ) ? 
-		 	(v+1)%colorsCount :
+		return ( this.grid.getNeighborsNeumann( x, y, 1 ).indexOf( (v+1)%this.statesCount ) >= 0 ) ? 
+		 	(v+1)%this.statesCount :
 		 	v;
 	}
 }	

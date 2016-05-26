@@ -19,6 +19,7 @@ class Html5Test {
 	public static var automaton: CelluarAutomaton = null;
 	public static var renderer: Renderer = null;
 	public static var predstamp = 0.0;
+	public static var simulationInterval = 100;
 
 	static function init() {
 		canvas.width = canvas.offsetWidth;
@@ -27,25 +28,33 @@ class Html5Test {
 		h = canvas.height;
 		var gridw = Std.int( w/cellw );
 		var gridh = Std.int( h/cellh );
-		automaton = new ca.impl.ForestFireCa( gridw, gridh, 0.00001, 0.01 );
+		//automaton = new ca.impl.ForestFireCa( gridw, gridh, 0.00001, 0.01 );
+		//automaton = new ca.impl.GenerationsCa( gridw, gridh, 10 );
+		automaton = new ca.impl.GameOfLifeCa( gridw, gridh, 0.5 );
 		renderer = new ca.backend.Html5CanvasRenderer( context );
-//		automaton = new ca.impl.GenerationsCa( gridw, gridh, 16 );//['red','orange','yellow','green','cyan','blue','purple'] );
+		
+		update();
 	}
 
-	static function update( timestamp: Float ) {
+	static function render( timestamp: Float ) {
 		if ( predstamp == 0.0 ) {
 			predstamp = timestamp;
 			automaton.render( renderer, cellw, cellh, w, h );
 		} else {
 			var dt = timestamp - predstamp;
 			if ( dt >= frameLen ) {
-				automaton.update();
+				//automaton.update();
 				automaton.render( renderer, cellw, cellh, w, h );
 				predstamp = timestamp;
 			}
 		}
 
-		Browser.window.requestAnimationFrame( update );
+		Browser.window.requestAnimationFrame( render );
+	}
+
+	static function update() {
+		automaton.update();
+		haxe.Timer.delay( update, simulationInterval );
 	}
 	
 	public static function main() {
@@ -55,6 +64,6 @@ class Html5Test {
 		Browser.window.onload = init;
 		Browser.window.onresize = init;
 
-		Browser.window.requestAnimationFrame( update );
+		Browser.window.requestAnimationFrame( render );
 	}
 }

@@ -14,7 +14,7 @@ class CelluarAutomaton {
 	public inline function get_height() return grid.height;
 
 	function initCell( v: Int, x: Int, y: Int ) {
-		return v;
+		return 0;
 	}
 
 	function updateCell( v: Int, x: Int, y: Int ) {
@@ -40,7 +40,6 @@ class CelluarAutomaton {
 			for ( y in 0...height ) {
 				var newc = updateCell( gridPrev[x][y], x, y );
 				gridNext[x][y] = newc;
-				renderBuffer.add( newc, x, y );
 			}
 		}
 		

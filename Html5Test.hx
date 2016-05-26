@@ -44,6 +44,8 @@ class Html5Test {
 			mouseIsDown = true;
 			mouseX = e.x;
 			mouseY = e.y;
+
+			onMousePressed( Std.int(e.x/cellw), Std.int(e.y/cellh));
 		}
 
 		canvas.onmouseup = function(e){
@@ -55,16 +57,25 @@ class Html5Test {
 		canvas.onmousemove = function(e){
 			mouseX = e.x;
 			mouseY = e.y;
+		
+			if ( mouseIsDown ) {
+				onMousePressed( Std.int(e.x/cellw), Std.int(e.y/cellh));
+			}
 		}
 		
 		var gridw = Std.int( w/cellw );
 		var gridh = Std.int( h/cellh );
 		//automaton = new ca.impl.ForestFireCa( gridw, gridh, 0.00001, 0.01 );
 		//automaton = new ca.impl.GenerationsCa( gridw, gridh, 10 );
-		automaton = new ca.impl.GameOfLifeCa( gridw, gridh, 0.5 );
+		//automaton = new ca.impl.GameOfLifeCa( gridw, gridh, 0.5 );
+		automaton = new ca.impl.FallingSandCa( gridw, gridh );
 		renderer = new ca.backend.Html5CanvasRenderer( context );
 		
 		update();
+	}
+
+	static function onMousePressed( x: Int, y: Int ) {
+		automaton.setCell( Std.int(mouseX/cellw), Std.int(mouseY/cellh), 1 ); 
 	}
 
 	static function render( timestamp: Float ) {
@@ -74,7 +85,6 @@ class Html5Test {
 		} else {
 			var dt = timestamp - predstamp;
 			if ( dt >= frameLen ) {
-				//automaton.update();
 				automaton.render( renderer, cellw, cellh, w, h );
 				predstamp = timestamp;
 			}
@@ -84,13 +94,10 @@ class Html5Test {
 	}
 
 	static function update() {
-		if ( mouseIsDown ) {
-			//trace( mouseX, mouseY, Std.int(mouseX/cellw), Std.int(mouseY/cellh) );
-			automaton.setCell( Std.int(mouseX/cellw), Std.int(mouseY/cellh), 1 ); 
-		}
 		if ( active ) {
 			automaton.update();
 		}
+		
 		haxe.Timer.delay( update, simulationInterval );
 	}
 	
@@ -100,9 +107,7 @@ class Html5Test {
 			
 		Browser.window.onload = init;
 		Browser.window.onresize = init;
-
 		Browser.window.requestAnimationFrame( render );
 	}
-	
 }
 

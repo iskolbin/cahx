@@ -22,12 +22,12 @@ class CelluarAutomaton {
 	}
 
 	public function new( width: Int, height: Int, colors: Array<String> ) {
+		this.statesCount = colors.length;
 		this.renderBuffer = new RenderBuffer( colors );
 		this.gridBuffer0 = new Grid<Int>( width, height );
 		this.gridBuffer0.map( initCell, this.gridBuffer0 );
 		this.gridBuffer1 = this.gridBuffer0.copy();
 		this.grid = this.gridBuffer0;
-		this.statesCount = colors.length;
 	}
 
 	public function update(): Void {

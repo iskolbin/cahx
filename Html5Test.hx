@@ -19,7 +19,7 @@ class Html5Test {
 	public static var automaton: CelluarAutomaton = null;
 	public static var renderer: Renderer = null;
 	public static var predstamp = 0.0;
-	public static var simulationInterval = 100;
+	public static var simulationInterval = Std.int(1000/60);
 
 	static var active = true;
 	static var mouseIsDown = false;
@@ -44,8 +44,6 @@ class Html5Test {
 			mouseIsDown = true;
 			mouseX = e.x;
 			mouseY = e.y;
-
-			onMousePressed( Std.int(e.x/cellw), Std.int(e.y/cellh));
 		}
 
 		canvas.onmouseup = function(e){
@@ -57,10 +55,6 @@ class Html5Test {
 		canvas.onmousemove = function(e){
 			mouseX = e.x;
 			mouseY = e.y;
-		
-			if ( mouseIsDown ) {
-				onMousePressed( Std.int(e.x/cellw), Std.int(e.y/cellh));
-			}
 		}
 		
 		var gridw = Std.int( w/cellw );
@@ -74,8 +68,8 @@ class Html5Test {
 		update();
 	}
 
-	static function onMousePressed( x: Int, y: Int ) {
-		automaton.setCell( Std.int(mouseX/cellw), Std.int(mouseY/cellh), 1 ); 
+	static function setCell( x: Int, y: Int, v: Int ) {
+		automaton.setCell( x, y, v );
 	}
 
 	static function render( timestamp: Float ) {
@@ -98,6 +92,10 @@ class Html5Test {
 			automaton.update();
 		}
 		
+		if ( mouseIsDown ) {
+			setCell( Std.int(mouseX/cellw), Std.int(mouseY/cellh), 1 ); 
+		}
+	
 		haxe.Timer.delay( update, simulationInterval );
 	}
 	

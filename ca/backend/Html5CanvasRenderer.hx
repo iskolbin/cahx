@@ -50,8 +50,7 @@ class Html5CanvasRenderer implements Renderer {
 			var count = counts[color];
 			if ( count > 0 ) {
 				var buffer = buffers[color];
-				//renderRects( buffer, count, color, cellw, cellh );
-				renderCross( buffer, count, color, cellw, cellh );
+				renderRects( buffer, count, color, cellw, cellh );
 			}
 		}
 	}

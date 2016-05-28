@@ -63,7 +63,8 @@ class Html5Test {
 		//automaton = new ca.impl.GenerationsCa( gridw, gridh, 10 );
 		//automaton = new ca.impl.GameOfLifeCa( gridw, gridh, 0.5 );
 		//automaton = new ca.impl.FallingSandCa( gridw, gridh );
-		automaton = new ca.impl.BlurCa( gridw, gridh, 0xff );
+		//automaton = new ca.impl.BlurCa( gridw, gridh, 0xff );
+		automaton = new ca.impl.ThermodynamicsCa( gridw, gridh, 0xff );
 		renderer = new ca.backend.Html5CanvasRenderer( context );
 		
 		update();

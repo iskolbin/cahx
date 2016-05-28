@@ -6,7 +6,6 @@ import ca.color.Rgb;
 
 class GenerationsCa extends CelluarAutomaton {
 	public function new( width: Int, height: Int, colorsCount: Int ) {
-		this.colorsCount = colorsCount;
 		var colors = new Array<String>();
 		for ( i in 0...colorsCount ) {
 			var hue = i * Hsv.FULL_CIRCLE/colorsCount;
